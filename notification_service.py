@@ -18,6 +18,11 @@ class EmailNotification(NotificationChannel):
         print(f"Sending Email: {message}")
 
 
+class WhatsAppNotification(NotificationChannel):
+    def send(self, message: str) -> None:
+        print(f"Sending WhatsApp Message: {message}")
+
+
 # STEP 2
 class NotificationChannelFactory:
     _channels: dict[str, NotificationChannel] = {}
@@ -39,6 +44,7 @@ class NotificationChannelFactory:
 
 NotificationChannelFactory.register_channel("sms", SMSNotification())
 NotificationChannelFactory.register_channel("email", EmailNotification())
+NotificationChannelFactory.register_channel("whatsapp", WhatsAppNotification())
 
 
 class NotificationService:
