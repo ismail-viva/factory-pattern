@@ -20,14 +20,26 @@ class EmailNotification(NotificationChannel):
 
 # STEP 2
 class NotificationChannelFactory:
-    @staticmethod
-    def create_channel(channel: str) -> NotificationChannel:
-        if channel == "sms":
-            return SMSNotification()
-        elif channel == "email":
-            return EmailNotification()
-        else:
-            raise ValueError(f"Unknown notification channel `{channel}`")
+    _channels: dict[str, NotificationChannel] = {}
+
+    @classmethod
+    def register_channel(cls, channel: str, creator: NotificationChannel) -> None:
+        if cls._channels.get(channel):
+            raise ValueError(f"Channel {channel} already registered")
+
+        cls._channels[channel] = creator
+
+    @classmethod
+    def create_channel(cls, channel: str) -> NotificationChannel:
+        if creator := cls._channels.get(channel):
+            return creator
+
+        raise ValueError(f"Unknown notification channel {channel}")
+
+
+NotificationChannelFactory.register_channel("sms", SMSNotification())
+NotificationChannelFactory.register_channel("email", EmailNotification())
+
 
 class NotificationService:
     def send_notification(self, message: str, channel: str) -> None:
